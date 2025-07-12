@@ -69,4 +69,12 @@ Shows recent actions like tenant addition, rent payment, complaint status, etc.
 ---
 
 ## 📁 **File Structure**
+-   home1.html # Main dashboard page
+ -  style.css # Custom styles (linked externally)
+ -  script.js # JS logic for modals, charts, etc. (linked externally)
+ -  tenant.html # Tenants page (linked from sidebar)
+ -  rent tracking.html # Rent tracking page
+ -  complaints.html # Complaints page
+ -  announcements.html # Announcements page
+ -  reports.html # Reports page login.html # Login/Logout functionality
 
