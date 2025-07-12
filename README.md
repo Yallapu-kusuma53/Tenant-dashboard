@@ -34,6 +34,12 @@ Shows recent actions like tenant addition, rent payment, complaint status, etc.
 
 ### ⚡ **Quick Actions Modals**
 
+####  login Tenant
+<img width="744" height="983" alt="image" src="https://github.com/user-attachments/assets/329b541c-ea53-4c6a-9ee1-311547e1494d" />
+
+####  Tenant Register
+<img width="737" height="1007" alt="image" src="https://github.com/user-attachments/assets/2b6ff168-a345-4385-b995-7ab1cc982c3d" />
+
 #### ➕ Add New Tenant  
 <img width="1414" height="863" alt="Add Tenant" src="https://github.com/user-attachments/assets/6ac9676a-cf3b-451c-ad1a-c2f54ad4e983" />
 
