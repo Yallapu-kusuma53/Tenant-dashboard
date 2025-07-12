@@ -10,6 +10,8 @@ A responsive and interactive **Community/Tenant Management Dashboard** built usi
   - Rent Collected
   - Pending Rent
   - Open Complaints
+  - Announcements
+  - Reports
   - <img width="1846" height="681" alt="image" src="https://github.com/user-attachments/assets/c987a58d-fb4d-4405-a6e8-ea7131215f18" />
 
 -  **Rent Collection Analytics** with Chart.js
