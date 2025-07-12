@@ -12,6 +12,10 @@ A responsive and interactive **Community/Tenant Management Dashboard** built usi
   - Open Complaints
   - Announcements
   - Reports
+ 
+  - ⚡ **Quick Actions Modals** for:
+ 
+  - 
   - <img width="1846" height="681" alt="image" src="https://github.com/user-attachments/assets/c987a58d-fb4d-4405-a6e8-ea7131215f18" />
 
 -  **Rent Collection Analytics** with Chart.js
@@ -20,7 +24,7 @@ A responsive and interactive **Community/Tenant Management Dashboard** built usi
 - 📝 **Recent Activity Feed** (e.g., tenant added, payments received, complaints resolved)
 - <img width="1427" height="637" alt="image" src="https://github.com/user-attachments/assets/1b0d138f-19aa-4837-9ca8-2aaee6cf259e" />
 
-- ⚡ **Quick Actions Modals** for:
+ 
   - Adding tenants
   - <img width="1414" height="863" alt="image" src="https://github.com/user-attachments/assets/6ac9676a-cf3b-451c-ad1a-c2f54ad4e983" />
 
@@ -33,11 +37,15 @@ A responsive and interactive **Community/Tenant Management Dashboard** built usi
   - Posting announcements
   - <img width="1419" height="1001" alt="image" src="https://github.com/user-attachments/assets/95b49e57-262b-40b4-a071-ee3e9c971433" />
   
-- **Upcoming Rent Due** table
-- 🚨 **Open Complaints** table
-- 🌐 Responsive Design with Glassmorphism effect and vibrant layout
+- Upcoming Rent Due 
+- <img width="710" height="609" alt="image" src="https://github.com/user-attachments/assets/bda7e1d5-b747-400c-95d8-e1a37883f37f" />
 
- Tech Stack
+- Open Complaints
+- <img width="691" height="740" alt="image" src="https://github.com/user-attachments/assets/ed235789-b3d9-4304-b05f-f42f826dace5" />
+
+-  Responsive Design with Glassmorphism effect and vibrant layout
+
+- Tech stack
 
 - HTML5
 - CSS3 (with Bootstrap 5.3)
@@ -45,13 +53,23 @@ A responsive and interactive **Community/Tenant Management Dashboard** built usi
 - FontAwesome Icons
 - Unsplash background integration
 
- File Structure
-├── home1.html # Main dashboard page
-├── style.css # Custom styles (linked externally)
-├── script.js # JS logic for modals, charts, etc. (linked externally)
-├── tenant.html # Tenants page (linked from sidebar)
-├── rent tracking.html # Rent tracking page
-├── complaints.html # Complaints page
-├── announcements.html # Announcements page
-├── reports.html # Reports page
-├── login.html # Login/Logout functionality
+ - File Structure
+ - home1.html # Main dashboard page
+ - style.css # Custom styles (linked externally)
+ -  script.js # JS logic for modals, charts, etc. (linked externally)
+ -  tenant.html # Tenants page (linked from sidebar)
+ -  rent tracking.html # Rent tracking page
+ -  complaints.html # Complaints page
+ -   announcements.html # Announcements page
+ -    reports.html # Reports page login.html # Login/Logout functionality
+ 
+ 
+ 
+  
+
+ 
+
+ 
+  
+ 
+  
