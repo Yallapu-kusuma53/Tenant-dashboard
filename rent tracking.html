@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Tracking - Community Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for rent tracking.html if not already in style.css */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary-color: #ffc107; /* Yellow */
+            --secondary-color: #212529; /* Dark */
+            --accent-color: #17a2b8; /* Info Blue */
+            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-right: var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar .navbar-brand {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 30px;
+            position: relative;
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            border: var(--glass-border);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-shadow: 1px 1px 5px #000;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .btn-yellow {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-yellow:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-yellow {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            background: transparent;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-yellow:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .table-dark thead th {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .table-dark tbody tr {
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: background-color 0.2s ease;
+        }
+        .table-dark tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .table-dark tbody td, .table-dark tbody th {
+            border-color: rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        /* Status Badges */
+        .badge-status-paid { background-color: #28a745; color: white; } /* Green */
+        .badge-status-pending { background-color: #ffc107; color: #212529; } /* Yellow */
+        .badge-status-overdue { background-color: #dc3545; color: white; } /* Red */
+
+        /* Toast Notifications (Moved here for consistency) */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: var(--glass-border);
+                box-shadow: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="toast-container">
+        <div id="successToast" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="successMessage">Operation completed successfully!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <div id="errorToast" class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorMessage">An error occurred! Please try again.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <a class="navbar-brand" href="home1.html">
+            <i class="fas fa-building me-2"></i>CommunityNet
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="home1.html">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="tenant.html">
+                    <i class="fas fa-users"></i> Tenants
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="rent tracking.html">
+                    <i class="fas fa-receipt"></i> Rent Tracking
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="complaints.html">
+                    <i class="fas fa-exclamation-triangle"></i> Complaints
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="announcements.html">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reports.html">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="login.html">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content py-5">
+        <div class="glass-container">
+            <h2><i class="fas fa-receipt me-2"></i>Rent Tracking</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                <div class="input-group mb-2 mb-md-0" style="max-width: 300px;">
+                    <input type="text" class="form-control" placeholder="Search by tenant/unit..." id="rentSearch">
+                    <button class="btn btn-outline-yellow" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <select class="form-select me-2 mb-2 mb-md-0" id="rentStatusFilter" style="max-width: 180px;">
+                        <option value="">All Statuses</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                    <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#recordPaymentModal">
+                        <i class="fas fa-plus-circle me-2"></i>Record Payment
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>Unit No.</th>
+                            <th>Tenant Name</th>
+                            <th>Rent Due</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rentTableBody">
+                        <tr data-id="1" data-unit="101" data-tenant="John Doe" data-rent="15000" data-due-date="2025-06-01" data-status="Paid">
+                            <td>101</td>
+                            <td>John Doe</td>
+                            <td>₹15,000</td>
+                            <td>2025-06-01</td>
+                            <td><span class="badge badge-status-paid">Paid</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-rent-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewRentModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-rent-status me-1" title="Edit Status"
+                                    data-bs-toggle="modal" data-bs-target="#editRentModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-rent" title="Delete Entry"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="2" data-unit="102" data-tenant="Jane Smith" data-rent="12000" data-due-date="2025-06-05" data-status="Pending">
+                            <td>102</td>
+                            <td>Jane Smith</td>
+                            <td>₹12,000</td>
+                            <td>2025-06-05</td>
+                            <td><span class="badge badge-status-pending">Pending</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-rent-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewRentModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-rent-status me-1" title="Edit Status"
+                                    data-bs-toggle="modal" data-bs-target="#editRentModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-rent" title="Delete Entry"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="3" data-unit="201" data-tenant="Robert Johnson" data-rent="18000" data-due-date="2025-05-28" data-status="Overdue">
+                            <td>201</td>
+                            <td>Robert Johnson</td>
+                            <td>₹18,000</td>
+                            <td>2025-05-28</td>
+                            <td><span class="badge badge-status-overdue">Overdue</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-rent-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewRentModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-rent-status me-1" title="Edit Status"
+                                    data-bs-toggle="modal" data-bs-target="#editRentModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-rent" title="Delete Entry"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Rent tracking pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="modal fade" id="recordPaymentModal" tabindex="-1" aria-labelledby="recordPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recordPaymentModalLabel">Record New Rent Payment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recordPaymentForm">
+                        <div class="mb-3">
+                            <label for="paymentTenant" class="form-label">Tenant Name (Unit No.)*</label>
+                            <input type="text" class="form-control" id="paymentTenant" placeholder="e.g., John Doe (Unit 101)" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentAmount" class="form-label">Amount Paid (₹)*</label>
+                            <input type="number" class="form-control" id="paymentAmount" min="0" step="any" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentDate" class="form-label">Payment Date*</label>
+                            <input type="date" class="form-control" id="paymentDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select" id="paymentMethod">
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Cash">Cash</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-yellow me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-yellow">Record Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewRentModal" tabindex="-1" aria-labelledby="viewRentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewRentModalLabel">Rent Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Rent ID:</strong> <span id="viewRentId"></span></p>
+                    <p><strong>Unit No:</strong> <span id="viewRentUnit"></span></p>
+                    <p><strong>Tenant Name:</strong> <span id="viewRentTenant"></span></p>
+                    <p><strong>Rent Due:</strong> <span id="viewRentAmountDue"></span></p>
+                    <p><strong>Due Date:</strong> <span id="viewRentDueDate"></span></p>
+                    <p><strong>Status:</strong> <span id="viewRentStatus" class="badge"></span></p>
+                    <hr>
+                    <p class="text-muted">More payment history details could go here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editRentModal" tabindex="-1" aria-labelledby="editRentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRentModalLabel">Edit Rent Status</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRentForm">
+                        <input type="hidden" id="editRentId">
+                        <div class="mb-3">
+                            <label for="editRentUnit" class="form-label">Unit No.</label>
+                            <input type="text" class="form-control" id="editRentUnit" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRentTenant" class="form-label">Tenant Name</label>
+                            <input type="text" class="form-control" id="editRentTenant" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRentAmount" class="form-label">Rent Amount (₹)</label>
+                            <input type="number" class="form-control" id="editRentAmount" min="0" step="any">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRentDueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="editRentDueDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRentStatusSelect" class="form-label">Status</label>
+                            <select class="form-select" id="editRentStatusSelect">
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-yellow me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-yellow">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to show toast notification (will eventually be in script.js)
+            window.showToast = function(message, type = 'success') {
+                const toastEl = type === 'success' ? document.getElementById('successToast') : document.getElementById('errorToast');
+                const messageSpan = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+                
+                if (messageSpan) messageSpan.textContent = message;
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            };
+
+            // Set current date for "Record Payment" modal
+            const paymentDateInput = document.getElementById('paymentDate');
+            if (paymentDateInput) {
+                const today = new Date();
+                paymentDateInput.value = today.toISOString().split('T')[0];
+            }
+
+            // Handle Record Payment Form Submission
+            document.getElementById('recordPaymentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const tenant = document.getElementById('paymentTenant').value;
+                const amount = document.getElementById('paymentAmount').value;
+                const date = document.getElementById('paymentDate').value;
+                const method = document.getElementById('paymentMethod').value;
+                
+                console.log('Recorded Payment:', { tenant, amount, date, method });
+                showToast(`Payment of ₹${amount} recorded for ${tenant}.`, 'success');
+                this.reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('recordPaymentModal'));
+                if (modal) modal.hide();
+                // In a real app, you'd update the rent tracking table or fetch new data
+            });
+
+            // Handle View Rent Details Modal
+            const viewRentModal = document.getElementById('viewRentModal');
+            viewRentModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const unit = button.getAttribute('data-unit');
+                const tenant = button.getAttribute('data-tenant');
+                const rent = button.getAttribute('data-rent');
+                const dueDate = button.getAttribute('data-due-date');
+                const status = button.getAttribute('data-status');
+
+                document.getElementById('viewRentId').textContent = id;
+                document.getElementById('viewRentUnit').textContent = unit;
+                document.getElementById('viewRentTenant').textContent = tenant;
+                document.getElementById('viewRentAmountDue').textContent = `₹${parseFloat(rent).toLocaleString('en-IN')}`;
+                document.getElementById('viewRentDueDate').textContent = dueDate;
+                
+                const statusBadge = document.getElementById('viewRentStatus');
+                statusBadge.textContent = status;
+                statusBadge.className = 'badge'; // Reset classes
+                if (status === 'Paid') statusBadge.classList.add('badge-status-paid');
+                else if (status === 'Pending') statusBadge.classList.add('badge-status-pending');
+                else if (status === 'Overdue') statusBadge.classList.add('badge-status-overdue');
+                else statusBadge.classList.add('bg-secondary'); // Default
+            });
+
+            // Handle Edit Rent Status Modal
+            const editRentModal = document.getElementById('editRentModal');
+            editRentModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+                const id = button.closest('tr').getAttribute('data-id'); // Get ID from table row
+                const unit = button.closest('tr').getAttribute('data-unit');
+                const tenant = button.closest('tr').getAttribute('data-tenant');
+                const rent = button.closest('tr').getAttribute('data-rent');
+                const dueDate = button.closest('tr').getAttribute('data-due-date');
+                const status = button.closest('tr').getAttribute('data-status');
+
+                document.getElementById('editRentId').value = id;
+                document.getElementById('editRentUnit').value = unit;
+                document.getElementById('editRentTenant').value = tenant;
+                document.getElementById('editRentAmount').value = rent;
+                document.getElementById('editRentDueDate').value = dueDate;
+                document.getElementById('editRentStatusSelect').value = status;
+            });
+
+            // Handle Edit Rent Form Submission
+            document.getElementById('editRentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const id = document.getElementById('editRentId').value;
+                const unit = document.getElementById('editRentUnit').value;
+                const tenant = document.getElementById('editRentTenant').value;
+                const amount = document.getElementById('editRentAmount').value;
+                const dueDate = document.getElementById('editRentDueDate').value;
+                const newStatus = document.getElementById('editRentStatusSelect').value;
+
+                console.log('Updating Rent Entry:', { id, unit, tenant, amount, dueDate, newStatus });
+                showToast(`Rent for Unit ${unit} updated to '${newStatus}'!`, 'success');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editRentModal'));
+                if (modal) modal.hide();
+                // In a real app, you'd update the specific row in the table
+                // Example: Find the row by data-id and update its content
+                const rowToUpdate = document.querySelector(`tr[data-id="${id}"]`);
+                if (rowToUpdate) {
+                    rowToUpdate.querySelector('td:nth-child(3)').textContent = `₹${parseFloat(amount).toLocaleString('en-IN')}`;
+                    rowToUpdate.querySelector('td:nth-child(4)').textContent = dueDate;
+                    const statusSpan = rowToUpdate.querySelector('td:nth-child(5) .badge');
+                    statusSpan.textContent = newStatus;
+                    statusSpan.className = 'badge'; // Reset classes
+                    if (newStatus === 'Paid') statusSpan.classList.add('badge-status-paid');
+                    else if (newStatus === 'Pending') statusSpan.classList.add('badge-status-pending');
+                    else if (newStatus === 'Overdue') statusSpan.classList.add('badge-status-overdue');
+                    else statusSpan.classList.add('bg-secondary');
+                    rowToUpdate.setAttribute('data-rent', amount);
+                    rowToUpdate.setAttribute('data-due-date', dueDate);
+                    rowToUpdate.setAttribute('data-status', newStatus);
+                }
+            });
+
+            // Handle Delete Rent Entry
+            document.getElementById('rentTableBody').addEventListener('click', function(event) {
+                if (event.target.closest('.delete-rent')) {
+                    event.preventDefault();
+                    const row = event.target.closest('tr');
+                    const rentId = row.getAttribute('data-id');
+                    const unitNo = row.getAttribute('data-unit');
+                    if (confirm(`Are you sure you want to delete the rent entry for Unit ${unitNo} (ID: ${rentId})?`)) {
+                        console.log(`Deleting rent entry ID: ${rentId}`);
+                        // In a real app, send API request to delete
+                        row.remove(); // Remove from UI
+                        showToast(`Rent entry for Unit ${unitNo} deleted!`, 'success');
+                    }
+                }
+            });
+
+            // Basic Search/Filter functionality (client-side for demonstration)
+            const rentSearchInput = document.getElementById('rentSearch');
+            const rentStatusFilter = document.getElementById('rentStatusFilter');
+            const rentTableBody = document.getElementById('rentTableBody');
+
+            function filterRentTable() {
+                const searchTerm = rentSearchInput.value.toLowerCase();
+                const filterStatus = rentStatusFilter.value;
+
+                Array.from(rentTableBody.children).forEach(row => {
+                    const tenant = row.getAttribute('data-tenant').toLowerCase();
+                    const unit = row.getAttribute('data-unit').toLowerCase();
+                    const status = row.getAttribute('data-status');
+
+                    const matchesSearch = tenant.includes(searchTerm) || unit.includes(searchTerm);
+                    const matchesStatus = filterStatus === '' || status === filterStatus;
+
+                    if (matchesSearch && matchesStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            rentSearchInput.addEventListener('keyup', filterRentTable);
+            rentStatusFilter.addEventListener('change', filterRentTable);
+        });
+    </script>
+</body>
+</html>

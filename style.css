@@ -1,0 +1,460 @@
+/* General Body and Overlay Styles */
+body {
+    background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white; /* Default text color for general body, overridden by content-specific styles */
+    min-height: 100vh;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Lighter overlay to let background image show more */
+    z-index: -1;
+}
+
+/* Root Variables for Theming */
+:root {
+    --primary-color: #ffc107; /* Yellow */
+    --secondary-color: #212529; /* Dark text for contrast on light backgrounds */
+    --accent-color: #17a2b8; /* Info Blue */
+
+    /* Glassmorphism for specific elements (sidebar, modals, structured content blocks) */
+    --glass-dark-bg: rgba(0, 0, 0, 0.5); /* Darker semi-transparent black for sidebar/modals */
+    --glass-dark-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-dark-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+    /* Lighter glassmorphism for content sections on bright dashboards */
+    --glass-light-bg: rgba(255, 255, 255, 0.2); /* Lighter semi-transparent white */
+    --glass-light-border: 1px solid rgba(255, 255, 255, 0.3);
+    --glass-light-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Styles (Remains dark glassmorphism) */
+.sidebar {
+    width: 250px;
+    background: var(--glass-dark-bg);
+    backdrop-filter: blur(10px);
+    border-right: var(--glass-dark-border);
+    box-shadow: var(--glass-dark-shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.sidebar .navbar-brand {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    display: block;
+}
+
+.sidebar .navbar-brand i {
+    color: var(--primary-color);
+}
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--primary-color);
+}
+
+.sidebar .nav-link i {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar .nav-item.mt-auto {
+    margin-top: auto;
+}
+
+
+/* Content Area Styles (General) */
+.content {
+    margin-left: 250px;
+    flex-grow: 1;
+    padding: 30px;
+    position: relative;
+    /* Default content background can be light for home1.html, overridden for others if needed */
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white default for content */
+    border-top-left-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    padding-bottom: 50px; /* Extra padding for bottom content */
+    color: var(--secondary-color); /* Default text color for content area */
+}
+
+/* Glass Container (for content blocks that need it, e.g., tables, chart section, modals) */
+.glass-container {
+    background: var(--glass-light-bg); /* Use lighter glass for internal blocks */
+    border-radius: 15px; /* Slightly smaller radius for internal blocks */
+    padding: 25px;
+    backdrop-filter: blur(8px); /* Less aggressive blur */
+    box-shadow: var(--glass-light-shadow);
+    border: var(--glass-light-border);
+    margin-bottom: 30px;
+    color: var(--secondary-color); /* Ensure text is dark within glass containers */
+}
+
+/* Headings (General, within content area) */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--secondary-color); /* Dark headings for light content */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2); /* Subtle light shadow on dark text */
+    margin-bottom: 25px; /* Slightly less bottom margin */
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h2::after, h3::after { /* Specific styling for underlines */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0; /* Align to left for dashboard sections */
+    width: 80px; /* Shorter underline */
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+/* Buttons (General) */
+.btn-yellow {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: 600;
+    padding: 10px 25px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-yellow:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-outline-yellow {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    background: transparent;
+    padding: 8px 20px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-yellow:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+/* Form Controls (General) */
+.form-control, .form-select {
+    background-color: rgba(0, 0, 0, 0.05); /* Very light transparent black for forms on bright background */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--secondary-color); /* Dark text for inputs */
+    padding: 10px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--secondary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5); /* Semi-transparent placeholder text */
+}
+
+/* Table Styles (General) */
+.table-dark { /* This class is generally used for pages like Tenants, Rent Tracking, Complaints */
+    --bs-table-color: white;
+    --bs-table-bg: transparent; /* Makes table background blend with glass-container */
+    --bs-table-border-color: rgba(255, 255, 255, 0.1);
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.07);
+}
+
+.table-dark thead th {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.table-dark tbody td, .table-dark tbody th {
+    border-color: rgba(255, 255, 255, 0.1);
+    vertical-align: middle;
+}
+
+/* Dashboard Specific Styles (home1.html) */
+.info-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.info-card h4 {
+    color: var(--secondary-color);
+    margin-bottom: 5px;
+}
+
+.info-card .display-4 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.info-card .icon-circle {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+/* Specific card colors for dashboard info cards */
+.card-total-tenants {
+    background-color: #e6f7ff; /* Light Blue */
+    color: #007bff; /* Blue text */
+}
+.card-total-tenants .icon-circle {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+
+.card-rent-collected {
+    background-color: #e6ffe6; /* Light Green */
+    color: #28a745; /* Green text */
+}
+.card-rent-collected .icon-circle {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.card-pending-rent {
+    background-color: #fff8e6; /* Light Orange */
+    color: #ffc107; /* Orange text (from primary-color) */
+}
+.card-pending-rent .icon-circle {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.card-open-complaints {
+    background-color: #ffe6e6; /* Light Red */
+    color: #dc3545; /* Red text */
+}
+.card-open-complaints .icon-circle {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+.activity-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.activity-item i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    color: var(--primary-color);
+}
+.activity-item .text-muted {
+    font-size: 0.85rem;
+    margin-left: auto;
+    white-space: nowrap;
+    color: rgba(0,0,0,0.6) !important; /* Make sure it's visible on light background */
+}
+.activity-item p {
+    margin: 0;
+    color: var(--secondary-color);
+}
+
+.quick-action-btn {
+    background-color: rgba(255, 193, 7, 0.1); /* Light yellow background */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.quick-action-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Dashboard specific tables (for upcoming rent, open complaints) */
+.dashboard-table thead th {
+    color: var(--secondary-color); /* Darker heading for light tables */
+    border-bottom: 2px solid var(--primary-color);
+}
+.dashboard-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white rows */
+    transition: background-color 0.2s ease;
+}
+.dashboard-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+.dashboard-table tbody td, .dashboard-table tbody th {
+    border-color: rgba(0, 0, 0, 0.05);
+    vertical-align: middle;
+    color: var(--secondary-color); /* Dark text for table content */
+}
+
+/* Chart.js Specific Styles */
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.9); /* Opaque white background for chart */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.chart-container canvas {
+    max-height: 100%;
+    max-width: 100%;
+}
+.no-data-message {
+    color: var(--secondary-color); /* Dark message for light background */
+    font-style: italic;
+}
+.report-section-title {
+    color: var(--secondary-color); /* Dark heading for light reports page */
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+/* Status Badges (General) */
+.badge-status-paid { background-color: #28a745; color: white; } /* Green */
+.badge-status-pending { background-color: #ffc107; color: #212529; } /* Yellow */
+.badge-status-overdue { background-color: #dc3545; color: white; } /* Red */
+.badge-status-active { background-color: #28a745; color: white; } /* Green */
+.badge-status-vacant { background-color: #6c757d; color: white; } /* Gray */
+.badge-status-notice { background-color: #ffc107; color: #212529; } /* Yellow */
+.badge.bg-danger { background-color: #dc3545 !important; }
+.badge.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.badge.bg-info { background-color: #17a2b8 !important; }
+.badge.bg-success { background-color: #28a745 !important; }
+
+.badge-status-new { background-color: #17a2b8; color: white; } /* Info Blue */
+.badge-status-inprogress { background-color: #0d6efd; color: white; } /* Bootstrap Blue */
+.badge-status-resolved { background-color: #28a745; color: white; } /* Green */
+
+
+/* Toast Notifications (Remains dark/standard Bootstrap colors) */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1080;
+}
+
+/* Modal specific styles (Remains dark glassmorphism) */
+.modal-content.bg-dark {
+    background-color: var(--glass-dark-bg) !important;
+    backdrop-filter: blur(15px);
+    border: var(--glass-dark-border);
+    box-shadow: var(--glass-dark-shadow);
+}
+
+.modal-header, .modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+    color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: var(--glass-dark-border);
+        box-shadow: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding-top: 20px;
+        border-top-left-radius: 0;
+    }
+
+    .glass-container {
+        padding: 20px;
+    }
+
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .d-flex.flex-wrap > * {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .input-group {
+        width: 100% !important;
+    }
+}

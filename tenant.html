@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenants - Community Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for tenant.html if not already in style.css */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary-color: #ffc107; /* Yellow */
+            --secondary-color: #212529; /* Dark */
+            --accent-color: #17a2b8; /* Info Blue */
+            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-right: var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar .navbar-brand {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 30px;
+            position: relative;
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            border: var(--glass-border);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-shadow: 1px 1px 5px #000;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .btn-yellow {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-yellow:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-yellow {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            background: transparent;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-yellow:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .table-dark thead th {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .table-dark tbody tr {
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: background-color 0.2s ease;
+        }
+        .table-dark tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .table-dark tbody td, .table-dark tbody th {
+            border-color: rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        /* Status Badges */
+        .badge-status-active { background-color: #28a745; color: white; } /* Green */
+        .badge-status-vacant { background-color: #6c757d; color: white; } /* Gray */
+        .badge-status-notice { background-color: #ffc107; color: #212529; } /* Yellow */
+
+        /* Toast Notifications (Moved here for consistency) */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: var(--glass-border);
+                box-shadow: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="toast-container">
+        <div id="successToast" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="successMessage">Operation completed successfully!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <div id="errorToast" class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorMessage">An error occurred! Please try again.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <a class="navbar-brand" href="home1.html">
+            <i class="fas fa-building me-2"></i>CommunityNet
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="home1.html">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="tenant.html">
+                    <i class="fas fa-users"></i> Tenants
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="rent tracking.html">
+                    <i class="fas fa-receipt"></i> Rent Tracking
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="complaints.html">
+                    <i class="fas fa-exclamation-triangle"></i> Complaints
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="announcements.html">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="reports.html">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="login.html">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content py-5">
+        <div class="glass-container">
+            <h2><i class="fas fa-users me-2"></i>Tenant Management</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                <div class="input-group mb-2 mb-md-0" style="max-width: 300px;">
+                    <input type="text" class="form-control" placeholder="Search tenants..." id="tenantSearch">
+                    <button class="btn btn-outline-yellow" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <select class="form-select me-2 mb-2 mb-md-0" id="tenantStatusFilter" style="max-width: 180px;">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Vacant">Vacant</option>
+                        <option value="Notice Given">Notice Given</option>
+                    </select>
+                    <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#addTenantModal">
+                        <i class="fas fa-user-plus me-2"></i>Add New Tenant
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>Unit No.</th>
+                            <th>Tenant Name</th>
+                            <th>Contact</th>
+                            <th>Move-in Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tenantTableBody">
+                        <tr data-id="1" data-unit="101" data-name="John Doe" data-email="john.doe@example.com" data-phone="9876543210" data-movein="2024-01-15" data-rent="15000" data-status="Active">
+                            <td>101</td>
+                            <td>John Doe</td>
+                            <td>9876543210</td>
+                            <td>2024-01-15</td>
+                            <td><span class="badge badge-status-active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-tenant-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewTenantModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-tenant me-1" title="Edit Tenant"
+                                    data-bs-toggle="modal" data-bs-target="#editTenantModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-tenant" title="Delete Tenant"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="2" data-unit="102" data-name="Jane Smith" data-email="jane.smith@example.com" data-phone="9123456789" data-movein="2023-11-01" data-rent="12000" data-status="Active">
+                            <td>102</td>
+                            <td>Jane Smith</td>
+                            <td>9123456789</td>
+                            <td>2023-11-01</td>
+                            <td><span class="badge badge-status-active">Active</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-tenant-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewTenantModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-tenant me-1" title="Edit Tenant"
+                                    data-bs-toggle="modal" data-bs-target="#editTenantModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-tenant" title="Delete Tenant"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="3" data-unit="201" data-name="Vacant" data-email="" data-phone="" data-movein="" data-rent="" data-status="Vacant">
+                            <td>201</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-status-vacant">Vacant</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-tenant-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewTenantModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-tenant me-1" title="Edit Tenant"
+                                    data-bs-toggle="modal" data-bs-target="#editTenantModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-tenant" title="Delete Tenant"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="4" data-unit="305" data-name="Robert Johnson" data-email="robert.j@example.com" data-phone="8765432109" data-movein="2022-09-20" data-rent="17000" data-status="Notice Given">
+                            <td>305</td>
+                            <td>Robert Johnson</td>
+                            <td>8765432109</td>
+                            <td>2022-09-20</td>
+                            <td><span class="badge badge-status-notice">Notice Given</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-tenant-details me-1" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#viewTenantModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning edit-tenant me-1" title="Edit Tenant"
+                                    data-bs-toggle="modal" data-bs-target="#editTenantModal">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-tenant" title="Delete Tenant"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Tenant pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addTenantModal" tabindex="-1" aria-labelledby="addTenantModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTenantModalLabel">Add New Tenant</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTenantForm">
+                        <div class="mb-3">
+                            <label for="tenantUnitNo" class="form-label">Unit No.*</label>
+                            <input type="text" class="form-control" id="tenantUnitNo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantName" class="form-label">Tenant Name*</label>
+                            <input type="text" class="form-control" id="tenantName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="tenantEmail">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantPhone" class="form-label">Phone Number*</label>
+                            <input type="tel" class="form-control" id="tenantPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantMoveInDate" class="form-label">Move-in Date*</label>
+                            <input type="date" class="form-control" id="tenantMoveInDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantMonthlyRent" class="form-label">Monthly Rent (₹)*</label>
+                            <input type="number" class="form-control" id="tenantMonthlyRent" min="0" step="any" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantStatus" class="form-label">Status</label>
+                            <select class="form-select" id="tenantStatus">
+                                <option value="Active" selected>Active</option>
+                                <option value="Vacant">Vacant</option>
+                                <option value="Notice Given">Notice Given</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-yellow me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-yellow">Add Tenant</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewTenantModal" tabindex="-1" aria-labelledby="viewTenantModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewTenantModalLabel">Tenant Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Tenant ID:</strong> <span id="viewTenantId"></span></p>
+                    <p><strong>Unit No:</strong> <span id="viewTenantUnit"></span></p>
+                    <p><strong>Name:</strong> <span id="viewTenantName"></span></p>
+                    <p><strong>Email:</strong> <span id="viewTenantEmail"></span></p>
+                    <p><strong>Phone:</strong> <span id="viewTenantPhone"></span></p>
+                    <p><strong>Move-in Date:</strong> <span id="viewTenantMoveInDate"></span></p>
+                    <p><strong>Monthly Rent:</strong> <span id="viewTenantMonthlyRent"></span></p>
+                    <p><strong>Status:</strong> <span id="viewTenantCurrentStatus" class="badge"></span></p>
+                    <hr>
+                    <p class="text-muted">Additional details like emergency contact, lease terms, etc., could be added here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editTenantModal" tabindex="-1" aria-labelledby="editTenantModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTenantModalLabel">Edit Tenant Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTenantForm">
+                        <input type="hidden" id="editTenantId">
+                        <div class="mb-3">
+                            <label for="editTenantUnitNo" class="form-label">Unit No.*</label>
+                            <input type="text" class="form-control" id="editTenantUnitNo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantName" class="form-label">Tenant Name*</label>
+                            <input type="text" class="form-control" id="editTenantName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editTenantEmail">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantPhone" class="form-label">Phone Number*</label>
+                            <input type="tel" class="form-control" id="editTenantPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantMoveInDate" class="form-label">Move-in Date*</label>
+                            <input type="date" class="form-control" id="editTenantMoveInDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantMonthlyRent" class="form-label">Monthly Rent (₹)*</label>
+                            <input type="number" class="form-control" id="editTenantMonthlyRent" min="0" step="any" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenantStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editTenantStatus">
+                                <option value="Active">Active</option>
+                                <option value="Vacant">Vacant</option>
+                                <option value="Notice Given">Notice Given</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-yellow me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-yellow">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to show toast notification (will eventually be in script.js)
+            window.showToast = function(message, type = 'success') {
+                const toastEl = type === 'success' ? document.getElementById('successToast') : document.getElementById('errorToast');
+                const messageSpan = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+                
+                if (messageSpan) messageSpan.textContent = message;
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            };
+
+            // Handle Add Tenant Form Submission
+            document.getElementById('addTenantForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const unitNo = document.getElementById('tenantUnitNo').value;
+                const name = document.getElementById('tenantName').value;
+                const email = document.getElementById('tenantEmail').value;
+                const phone = document.getElementById('tenantPhone').value;
+                const moveInDate = document.getElementById('tenantMoveInDate').value;
+                const monthlyRent = document.getElementById('tenantMonthlyRent').value;
+                const status = document.getElementById('tenantStatus').value;
+                
+                console.log('New Tenant:', { unitNo, name, email, phone, moveInDate, monthlyRent, status });
+                showToast(`Tenant ${name} (Unit ${unitNo}) added successfully!`, 'success');
+                this.reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTenantModal'));
+                if (modal) modal.hide();
+                // In a real app, you'd dynamically add this new tenant to the table
+            });
+
+            // Handle View Tenant Details Modal
+            const viewTenantModal = document.getElementById('viewTenantModal');
+            viewTenantModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+                const id = button.closest('tr').getAttribute('data-id'); // Get ID from table row
+                const unit = button.closest('tr').getAttribute('data-unit');
+                const name = button.closest('tr').getAttribute('data-name');
+                const email = button.closest('tr').getAttribute('data-email');
+                const phone = button.closest('tr').getAttribute('data-phone');
+                const moveInDate = button.closest('tr').getAttribute('data-movein');
+                const rent = button.closest('tr').getAttribute('data-rent');
+                const status = button.closest('tr').getAttribute('data-status');
+
+                document.getElementById('viewTenantId').textContent = id;
+                document.getElementById('viewTenantUnit').textContent = unit;
+                document.getElementById('viewTenantName').textContent = name;
+                document.getElementById('viewTenantEmail').textContent = email || 'N/A';
+                document.getElementById('viewTenantPhone').textContent = phone;
+                document.getElementById('viewTenantMoveInDate').textContent = moveInDate;
+                document.getElementById('viewTenantMonthlyRent').textContent = `₹${parseFloat(rent).toLocaleString('en-IN')}`;
+                
+                const statusBadge = document.getElementById('viewTenantCurrentStatus');
+                statusBadge.textContent = status;
+                statusBadge.className = 'badge'; // Reset classes
+                if (status === 'Active') statusBadge.classList.add('badge-status-active');
+                else if (status === 'Vacant') statusBadge.classList.add('badge-status-vacant');
+                else if (status === 'Notice Given') statusBadge.classList.add('badge-status-notice');
+                else statusBadge.classList.add('bg-secondary'); // Default
+            });
+
+            // Handle Edit Tenant Modal
+            const editTenantModal = document.getElementById('editTenantModal');
+            editTenantModal.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget;
+                const id = button.closest('tr').getAttribute('data-id');
+                const unit = button.closest('tr').getAttribute('data-unit');
+                const name = button.closest('tr').getAttribute('data-name');
+                const email = button.closest('tr').getAttribute('data-email');
+                const phone = button.closest('tr').getAttribute('data-phone');
+                const moveInDate = button.closest('tr').getAttribute('data-movein');
+                const rent = button.closest('tr').getAttribute('data-rent');
+                const status = button.closest('tr').getAttribute('data-status');
+
+                document.getElementById('editTenantId').value = id;
+                document.getElementById('editTenantUnitNo').value = unit;
+                document.getElementById('editTenantName').value = name;
+                document.getElementById('editTenantEmail').value = email;
+                document.getElementById('editTenantPhone').value = phone;
+                document.getElementById('editTenantMoveInDate').value = moveInDate;
+                document.getElementById('editTenantMonthlyRent').value = rent;
+                document.getElementById('editTenantStatus').value = status;
+            });
+
+            // Handle Edit Tenant Form Submission
+            document.getElementById('editTenantForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const id = document.getElementById('editTenantId').value;
+                const unitNo = document.getElementById('editTenantUnitNo').value;
+                const name = document.getElementById('editTenantName').value;
+                const email = document.getElementById('editTenantEmail').value;
+                const phone = document.getElementById('editTenantPhone').value;
+                const moveInDate = document.getElementById('editTenantMoveInDate').value;
+                const monthlyRent = document.getElementById('editTenantMonthlyRent').value;
+                const newStatus = document.getElementById('editTenantStatus').value;
+
+                console.log('Updating Tenant:', { id, unitNo, name, email, phone, moveInDate, monthlyRent, newStatus });
+                showToast(`Tenant ${name} (Unit ${unitNo}) updated successfully!`, 'success');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editTenantModal'));
+                if (modal) modal.hide();
+                
+                // Update the table row directly for demonstration
+                const rowToUpdate = document.querySelector(`tr[data-id="${id}"]`);
+                if (rowToUpdate) {
+                    rowToUpdate.setAttribute('data-unit', unitNo);
+                    rowToUpdate.setAttribute('data-name', name);
+                    rowToUpdate.setAttribute('data-email', email);
+                    rowToUpdate.setAttribute('data-phone', phone);
+                    rowToUpdate.setAttribute('data-movein', moveInDate);
+                    rowToUpdate.setAttribute('data-rent', monthlyRent);
+                    rowToUpdate.setAttribute('data-status', newStatus);
+
+                    rowToUpdate.querySelector('td:nth-child(1)').textContent = unitNo;
+                    rowToUpdate.querySelector('td:nth-child(2)').textContent = name;
+                    rowToUpdate.querySelector('td:nth-child(3)').textContent = phone;
+                    rowToUpdate.querySelector('td:nth-child(4)').textContent = moveInDate;
+                    const statusSpan = rowToUpdate.querySelector('td:nth-child(5) .badge');
+                    statusSpan.textContent = newStatus;
+                    statusSpan.className = 'badge'; // Reset classes
+                    if (newStatus === 'Active') statusSpan.classList.add('badge-status-active');
+                    else if (newStatus === 'Vacant') statusSpan.classList.add('badge-status-vacant');
+                    else if (newStatus === 'Notice Given') statusSpan.classList.add('badge-status-notice');
+                    else statusSpan.classList.add('bg-secondary');
+                }
+            });
+
+            // Handle Delete Tenant
+            document.getElementById('tenantTableBody').addEventListener('click', function(event) {
+                if (event.target.closest('.delete-tenant')) {
+                    event.preventDefault();
+                    const row = event.target.closest('tr');
+                    const tenantId = row.getAttribute('data-id');
+                    const tenantName = row.getAttribute('data-name');
+                    if (confirm(`Are you sure you want to delete tenant ${tenantName} (ID: ${tenantId})? This action cannot be undone.`)) {
+                        console.log(`Deleting tenant ID: ${tenantId}`);
+                        // In a real app, send API request to delete
+                        row.remove(); // Remove from UI
+                        showToast(`Tenant ${tenantName} deleted!`, 'success');
+                    }
+                }
+            });
+
+            // Basic Search/Filter functionality (client-side for demonstration)
+            const tenantSearchInput = document.getElementById('tenantSearch');
+            const tenantStatusFilter = document.getElementById('tenantStatusFilter');
+            const tenantTableBody = document.getElementById('tenantTableBody');
+
+            function filterTenantTable() {
+                const searchTerm = tenantSearchInput.value.toLowerCase();
+                const filterStatus = tenantStatusFilter.value;
+
+                Array.from(tenantTableBody.children).forEach(row => {
+                    const name = row.getAttribute('data-name').toLowerCase();
+                    const unit = row.getAttribute('data-unit').toLowerCase();
+                    const status = row.getAttribute('data-status');
+
+                    const matchesSearch = name.includes(searchTerm) || unit.includes(searchTerm);
+                    const matchesStatus = filterStatus === '' || status === filterStatus;
+
+                    if (matchesSearch && matchesStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            tenantSearchInput.addEventListener('keyup', filterTenantTable);
+            tenantStatusFilter.addEventListener('change', filterTenantTable);
+        });
+    </script>
+</body>
+</html>

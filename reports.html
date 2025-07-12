@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Community Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for reports.html if not already in style.css */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary-color: #ffc107; /* Yellow */
+            --secondary-color: #212529; /* Dark */
+            --accent-color: #17a2b8; /* Info Blue */
+            --glass-bg: rgba(0, 0, 0, 0.5);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-right: var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar .navbar-brand {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 30px;
+            position: relative;
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glass-shadow);
+            border: var(--glass-border);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-shadow: 1px 1px 5px #000;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .btn-yellow {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-yellow:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline-yellow {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            background: transparent;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-yellow:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px; /* Fixed height for charts */
+            width: 100%;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.08); /* Slightly lighter background for charts */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .chart-container canvas {
+            max-height: 100%;
+            max-width: 100%;
+        }
+
+        .no-data-message {
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        .report-section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Toast Notifications (Moved here for consistency) */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: var(--glass-border);
+                box-shadow: none;
+            }
+
+            .content {
+                margin-left: 0;
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="toast-container">
+        <div id="successToast" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="successMessage">Operation completed successfully!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <div id="errorToast" class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorMessage">An error occurred! Please try again.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <a class="navbar-brand" href="home1.html">
+            <i class="fas fa-building me-2"></i>CommunityNet
+        </a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="home1.html">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="tenant.html">
+                    <i class="fas fa-users"></i> Tenants
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="rent tracking.html">
+                    <i class="fas fa-receipt"></i> Rent Tracking
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="complaints.html">
+                    <i class="fas fa-exclamation-triangle"></i> Complaints
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="announcements.html">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="reports.html">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="login.html">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content py-5">
+        <div class="glass-container">
+            <h2><i class="fas fa-chart-line me-2"></i>Community Reports</h2>
+
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-4">
+                    <label for="reportType" class="form-label text-white-75">Select Report Type</label>
+                    <select class="form-select" id="reportType">
+                        <option value="">-- Select --</option>
+                        <option value="rentCollection">Rent Collection Summary</option>
+                        <option value="tenantStatus">Tenant Status Overview</option>
+                        <option value="complaintSummary">Complaint Resolution Status</option>
+                        <option value="announcementEngagement">Announcement Engagement</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="reportStartDate" class="form-label text-white-75">Start Date</label>
+                    <input type="date" class="form-control" id="reportStartDate">
+                </div>
+                <div class="col-md-3">
+                    <label for="reportEndDate" class="form-label text-white-75">End Date</label>
+                    <input type="date" class="form-control" id="reportEndDate">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-yellow w-100" id="generateReportBtn">
+                        <i class="fas fa-chart-bar me-2"></i>Generate
+                    </button>
+                </div>
+            </div>
+
+            <hr class="border-secondary mb-4">
+
+            <div id="reportDisplayArea">
+                <p class="text-center no-data-message">Select a report type and date range, then click 'Generate' to view insights.</p>
+
+                <div id="rentCollectionReport" class="report-section d-none">
+                    <h4 class="report-section-title"><i class="fas fa-receipt me-2"></i>Rent Collection Summary</h4>
+                    <div class="chart-container">
+                        <canvas id="rentCollectionChart"></canvas>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-dark text-white mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Expected Rent</th>
+                                    <th>Collected Rent</th>
+                                    <th>Outstanding</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rentCollectionTableBody">
+                                <tr><td>Jan 2025</td><td>₹50,000</td><td>₹45,000</td><td>₹5,000</td></tr>
+                                <tr><td>Feb 2025</td><td>₹50,000</td><td>₹50,000</td><td>₹0</td></tr>
+                                <tr><td>Mar 2025</td><td>₹50,000</td><td>₹48,000</td><td>₹2,000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tenantStatusReport" class="report-section d-none">
+                    <h4 class="report-section-title"><i class="fas fa-users me-2"></i>Tenant Status Overview</h4>
+                    <div class="chart-container">
+                        <canvas id="tenantStatusChart"></canvas>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-dark text-white mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Number of Tenants</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tenantStatusTableBody">
+                                <tr><td>Active</td><td>28</td><td>87.5%</td></tr>
+                                <tr><td>Vacant Units</td><td>2</td><td>6.25%</td></tr>
+                                <tr><td>Notice Given</td><td>2</td><td>6.25%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="complaintSummaryReport" class="report-section d-none">
+                    <h4 class="report-section-title"><i class="fas fa-exclamation-triangle me-2"></i>Complaint Resolution Status</h4>
+                    <div class="chart-container">
+                        <canvas id="complaintSummaryChart"></canvas>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-dark text-white mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Number of Complaints</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintSummaryTableBody">
+                                <tr><td>Pending</td><td>3</td><td>30%</td></tr>
+                                <tr><td>In Progress</td><td>2</td><td>20%</td></tr>
+                                <tr><td>Resolved</td><td>5</td><td>50%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="announcementEngagementReport" class="report-section d-none">
+                    <h4 class="report-section-title"><i class="fas fa-bullhorn me-2"></i>Announcement Engagement</h4>
+                    <div class="chart-container">
+                        <canvas id="announcementEngagementChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-center text-white-50">This report would typically show views or interactions per announcement, if implemented.</p>
+                </div>
+
+            </div> </div> </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let myChart = null; // Variable to hold the current Chart.js instance
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to show toast notification (will eventually be in script.js)
+            window.showToast = function(message, type = 'success') {
+                const toastEl = type === 'success' ? document.getElementById('successToast') : document.getElementById('errorToast');
+                const messageSpan = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+                
+                if (messageSpan) messageSpan.textContent = message;
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            };
+
+            const reportTypeSelect = document.getElementById('reportType');
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const reportDisplayArea = document.getElementById('reportDisplayArea');
+            const reportSections = document.querySelectorAll('.report-section');
+            const noDataMessage = document.querySelector('.no-data-message');
+
+            generateReportBtn.addEventListener('click', function() {
+                const selectedReport = reportTypeSelect.value;
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+
+                // Hide all report sections and show no data message by default
+                reportSections.forEach(section => section.classList.add('d-none'));
+                noDataMessage.classList.remove('d-none');
+
+                if (myChart) {
+                    myChart.destroy(); // Destroy previous chart instance
+                    myChart = null;
+                }
+
+                if (!selectedReport) {
+                    showToast('Please select a report type.', 'error');
+                    return;
+                }
+                
+                showToast(`Generating ${selectedReport} report for ${startDate || 'all dates'} to ${endDate || 'all dates'}...`, 'success');
+
+                noDataMessage.classList.add('d-none'); // Hide initial message
+
+                // Simulate fetching data and rendering report based on selected type
+                setTimeout(() => {
+                    switch (selectedReport) {
+                        case 'rentCollection':
+                            document.getElementById('rentCollectionReport').classList.remove('d-none');
+                            renderRentCollectionChart();
+                            // Populate table dynamically if data is fetched
+                            break;
+                        case 'tenantStatus':
+                            document.getElementById('tenantStatusReport').classList.remove('d-none');
+                            renderTenantStatusChart();
+                            // Populate table dynamically if data is fetched
+                            break;
+                        case 'complaintSummary':
+                            document.getElementById('complaintSummaryReport').classList.remove('d-none');
+                            renderComplaintSummaryChart();
+                            // Populate table dynamically if data is fetched
+                            break;
+                        case 'announcementEngagement':
+                            document.getElementById('announcementEngagementReport').classList.remove('d-none');
+                            renderAnnouncementEngagementChart(); // Example function, might be just text or a table
+                            break;
+                        default:
+                            noDataMessage.classList.remove('d-none');
+                            break;
+                    }
+                }, 500); // Simulate network delay
+            });
+
+            // Chart rendering functions (example data)
+            function renderRentCollectionChart() {
+                const ctx = document.getElementById('rentCollectionChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Collected Rent (₹)',
+                            data: [45000, 50000, 48000, 52000, 49000, 51000],
+                            backgroundColor: 'rgba(255, 193, 7, 0.7)', // Primary color with opacity
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Expected Rent (₹)',
+                            data: [50000, 50000, 50000, 50000, 50000, 50000],
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light color with opacity
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'white' // Legend text color
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: 'rgba(255, 255, 255, 0.8)' }, // Y-axis tick color
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' } // Y-axis grid line color
+                            },
+                            x: {
+                                ticks: { color: 'rgba(255, 255, 255, 0.8)' }, // X-axis tick color
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' } // X-axis grid line color
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderTenantStatusChart() {
+                const ctx = document.getElementById('tenantStatusChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Active', 'Vacant Units', 'Notice Given'],
+                        datasets: [{
+                            data: [28, 2, 2],
+                            backgroundColor: [
+                                'rgba(255, 193, 7, 0.8)', // Primary color
+                                'rgba(173, 216, 230, 0.8)', // Light blue
+                                'rgba(255, 99, 132, 0.8)'  // Red
+                            ],
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderComplaintSummaryChart() {
+                const ctx = document.getElementById('complaintSummaryChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Pending', 'In Progress', 'Resolved'],
+                        datasets: [{
+                            data: [3, 2, 5],
+                            backgroundColor: [
+                                'rgba(255, 193, 7, 0.8)',   // Warning yellow
+                                'rgba(23, 162, 184, 0.8)',  // Info blue
+                                'rgba(40, 167, 69, 0.8)'    // Success green
+                            ],
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderAnnouncementEngagementChart() {
+                // For announcement engagement, you might have a line chart showing views over time
+                // or a bar chart showing engagement per announcement title.
+                // For this example, we'll keep it simple or show a message.
+                const ctx = document.getElementById('announcementEngagementChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Ann 1', 'Ann 2', 'Ann 3', 'Ann 4'],
+                        datasets: [{
+                            label: 'Views',
+                            data: [150, 220, 180, 300],
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            backgroundColor: 'rgba(255, 193, 7, 0.3)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'white'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: 'rgba(255, 255, 255, 0.8)' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: 'rgba(255, 255, 255, 0.8)' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
