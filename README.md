@@ -1,5 +1,8 @@
 # 🏢 Community Management Dashboard
 
+<img width="1878" height="1021" alt="image" src="https://github.com/user-attachments/assets/adb41708-2eb9-4f95-8252-64756d1e6221" />
+
+
 A responsive and interactive **Community/Tenant Management Dashboard** built using **HTML**, **CSS (Bootstrap 5)**, **JavaScript**, and **FontAwesome**. This dashboard helps admins manage tenant information, rent tracking, complaints, and announcements efficiently.
 
   Features
